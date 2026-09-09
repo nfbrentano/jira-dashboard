@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { KPICards } from './KPICards';
 import { useIssuesQuery } from '../../hooks/useIssuesQuery';
 import { useFilterStore } from '../../store/filterStore';
 import { useConfigStore } from '../../store/configStore';
-import { AlertCircle, ExternalLink } from 'lucide-react';
+import { AlertCircle, ExternalLink, Download } from 'lucide-react';
 import { StatusDistributionChart } from './StatusDistributionChart';
 import { ThroughputChart } from './ThroughputChart';
 import { WipLimitsView } from './WipLimitsView';
 import { CycleTimeChart } from './CycleTimeChart';
+import { toPng } from 'html-to-image';
 
 export const DashboardMain: React.FC = () => {
   const { data, isLoading } = useIssuesQuery();
@@ -16,10 +17,47 @@ export const DashboardMain: React.FC = () => {
 
   const issues = data?.issues || [];
 
+  const dashboardRef = useRef<HTMLDivElement>(null);
+
+  const handleExportPng = async () => {
+    if (dashboardRef.current) {
+      try {
+        // Find if dark mode is active to set proper background
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const backgroundColor = isDarkMode ? '#0f172a' : '#ffffff'; // slate-900 or white
+
+        const dataUrl = await toPng(dashboardRef.current, { 
+          cacheBust: true, 
+          backgroundColor,
+          style: {
+            // Ensure no scrollbars or overflow issues in exported image
+            padding: '24px'
+          }
+        });
+        const link = document.createElement('a');
+        link.download = `dashboard-${projectKey || 'export'}-${new Date().toISOString().split('T')[0]}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error('Error exporting PNG', err);
+      }
+    }
+  };
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6" ref={dashboardRef}>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-text-main">Dashboard</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold text-text-main">Dashboard</h2>
+          <button
+            onClick={handleExportPng}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-main bg-surface border border-border rounded-lg hover:bg-background transition-colors"
+            title="Exportar como PNG"
+          >
+            <Download size={16} />
+            <span>Exportar</span>
+          </button>
+        </div>
         {issues.length > 0 && (
           <span className="text-sm text-text-muted bg-surface px-3 py-1 rounded-full border border-border">
             {issues.length} {issues.length === 1 ? 'item' : 'itens'}
