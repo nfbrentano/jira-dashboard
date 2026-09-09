@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useIssuesQuery } from '../../hooks/useIssuesQuery';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
-import { differenceInDays, parseISO, format } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 
 export const CycleTimeChart: React.FC = () => {
   const { data, isLoading } = useIssuesQuery();

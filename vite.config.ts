@@ -10,7 +10,8 @@ export default defineConfig({
         target: 'https://implyteam.atlassian.net',
         changeOrigin: true,
         secure: false,
-        router: (req) => {
+        // @ts-ignore - router is supported by http-proxy but may be missing from Vite's types
+        router: (req: any) => {
           const match = req.url?.match(/^\/jira-proxy\/(https?:\/\/[^/]+)/);
           if (match) {
             return match[1];

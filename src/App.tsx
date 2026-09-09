@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useConfigStore } from './store/configStore';
 import { ConfigForm } from './components/Setup/ConfigForm';
