@@ -6,10 +6,10 @@ import { Settings, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 export const ConfigForm: React.FC = () => {
   const { jiraDomain, email, apiToken, corsProxy, setConfig } = useConfigStore();
   
-  const [localDomain, setLocalDomain] = useState(jiraDomain);
-  const [localEmail, setLocalEmail] = useState(email);
-  const [localToken, setLocalToken] = useState(apiToken);
-  const [localProxy, setLocalProxy] = useState(corsProxy);
+  const [localDomain, setLocalDomain] = useState(jiraDomain || '');
+  const [localEmail, setLocalEmail] = useState(email || '');
+  const [localToken, setLocalToken] = useState(apiToken || '');
+  const [localProxy, setLocalProxy] = useState(corsProxy || '/jira-proxy/');
   
   const [status, setStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -19,49 +19,21 @@ export const ConfigForm: React.FC = () => {
     setErrorMsg('');
     
     try {
-      // Create local API instance for testing since store is not updated yet
-      const baseURL = `https://${localDomain.replace(/^https?:\/\//, '').replace(/\/$/, '')}`;
-      const auth = btoa(`${localEmail}:${localToken}`);
-      
-      let testUrl = `${baseURL}/rest/api/3/myself`;
-      if (localProxy) {
-        let proxyUrl = localProxy.trim();
-        if (!proxyUrl.startsWith('http://') && !proxyUrl.startsWith('https://') && !proxyUrl.startsWith('/')) {
-          proxyUrl = `https://${proxyUrl}`;
-        }
-        if (!proxyUrl.endsWith('/') && !proxyUrl.endsWith('=')) {
-          proxyUrl += '/';
-        }
-        // Some proxies (like cors-anywhere) expect the URL as a query param, others as a path.
-        // We'll use the original encodeURIComponent if it ends with =, otherwise don't encode the protocol/slashes.
-        if (proxyUrl.endsWith('=')) {
-          testUrl = `${proxyUrl}${encodeURIComponent(testUrl)}`;
-        } else {
-          testUrl = `${proxyUrl}${testUrl}`;
-        }
-      }
-
-      const response = await fetch(testUrl, {
-        headers: {
-          Authorization: `Basic ${auth}`,
-          Accept: 'application/json',
-        }
+      const data = await testConnection({
+        jiraDomain: localDomain,
+        email: localEmail,
+        apiToken: localToken,
+        corsProxy: localProxy || '/jira-proxy/',
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data && data.accountId) {
+      if (data && (data.accountId || data.displayName || data.emailAddress)) {
         setStatus('success');
-        // Only save to store if successful
+        // Save to store
         setConfig({
-          jiraDomain: baseURL.replace('https://', ''),
+          jiraDomain: localDomain.replace(/^https?:\/\//, '').replace(/\/$/, ''),
           email: localEmail,
           apiToken: localToken,
-          corsProxy: localProxy
+          corsProxy: localProxy || '/jira-proxy/',
         });
       } else {
         setStatus('error');
@@ -69,7 +41,12 @@ export const ConfigForm: React.FC = () => {
       }
     } catch (err: any) {
       setStatus('error');
-      setErrorMsg(err.message || 'Connection failed.');
+      const message =
+        err.response?.data?.errorMessages?.join(', ') ||
+        err.response?.data?.message ||
+        err.message ||
+        'Connection failed.';
+      setErrorMsg(message);
     }
   };
 
@@ -133,12 +110,12 @@ export const ConfigForm: React.FC = () => {
             <label className="block text-sm font-medium text-text-main mb-1">CORS Proxy URL</label>
             <input 
               type="text" 
-              placeholder="https://cors-anywhere.herokuapp.com/?url="
+              placeholder="/jira-proxy/"
               className="w-full bg-background border border-border rounded-lg px-4 py-2 text-text-main focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={localProxy}
               onChange={(e) => setLocalProxy(e.target.value)}
             />
-            <p className="text-xs text-text-muted mt-1">Required to bypass browser CORS policies.</p>
+            <p className="text-xs text-text-muted mt-1">Default is <code>/jira-proxy/</code> (local Vite proxy).</p>
           </div>
         </div>
 

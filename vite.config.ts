@@ -7,36 +7,40 @@ export default defineConfig({
   server: {
     proxy: {
       '/jira-proxy': {
-        target: 'https://implyteam.atlassian.net', // Default fallback
+        target: 'https://implyteam.atlassian.net',
         changeOrigin: true,
         secure: false,
         router: (req) => {
-          // Extract the target domain dynamically
-          const match = req.url?.match(/^\/jira-proxy\/(https:\/\/[^\/]+)/);
+          const match = req.url?.match(/^\/jira-proxy\/(https?:\/\/[^/]+)/);
           if (match) {
             return match[1];
+          }
+          const matchNoProto = req.url?.match(/^\/jira-proxy\/([^/]+\.atlassian\.net)/);
+          if (matchNoProto) {
+            return `https://${matchNoProto[1]}`;
           }
           return 'https://implyteam.atlassian.net';
         },
         rewrite: (path) => {
-          // Remove the /jira-proxy/https://domain.com part, keeping only the path
-          const match = path.match(/^\/jira-proxy\/https:\/\/[^\/]+(.*)/);
+          // Strips /jira-proxy/https://domain.atlassian.net or /jira-proxy/domain.atlassian.net
+          const match = path.match(/^\/jira-proxy\/(?:https?:\/\/)?[^/]+(.*)/);
           if (match) {
-            return match[1];
+            return match[1] || '/';
           }
           return path.replace(/^\/jira-proxy/, '');
         },
-        configure: (proxy, _options) => {
-          proxy.on('proxyReq', (proxyReq, req, _res) => {
-            // Jira blocks POST requests if Origin or Referer is localhost due to CSRF protection.
-            // We strip or rewrite them so it looks like a server-to-server request.
-            proxyReq.setHeader('Origin', `https://${proxyReq.host}`);
-            proxyReq.setHeader('Referer', `https://${proxyReq.host}`);
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const match = req.url?.match(/^\/jira-proxy\/(?:https?:\/\/)?([^/]+)/);
+            const host = match ? match[1].replace(/^https?:\/\//, '') : 'implyteam.atlassian.net';
+            proxyReq.setHeader('Host', host);
+            proxyReq.setHeader('Origin', `https://${host}`);
+            proxyReq.setHeader('Referer', `https://${host}`);
             proxyReq.setHeader('X-Atlassian-Token', 'no-check');
-            proxyReq.setHeader('User-Agent', 'curl/7.68.0'); // Pretend to be curl to bypass browser checks
+            proxyReq.setHeader('User-Agent', 'curl/7.68.0');
           });
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 })

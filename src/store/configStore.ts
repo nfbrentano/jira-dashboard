@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface ConfigState {
+export interface ConfigState {
   jiraDomain: string;
   email: string;
   apiToken: string;
@@ -17,9 +17,9 @@ export const useConfigStore = create<ConfigState>()(
       jiraDomain: '',
       email: '',
       apiToken: '',
-      corsProxy: '/jira-proxy/', // Use Vite's built-in dev proxy (no external service needed)
+      corsProxy: '/jira-proxy/',
       setConfig: (config) => set((state) => ({ ...state, ...config })),
-      clearConfig: () => set({ jiraDomain: '', email: '', apiToken: '', corsProxy: '' }),
+      clearConfig: () => set({ jiraDomain: '', email: '', apiToken: '', corsProxy: '/jira-proxy/' }),
       isConfigured: () => {
         const { jiraDomain, email, apiToken } = get();
         return !!(jiraDomain && email && apiToken);
@@ -27,14 +27,15 @@ export const useConfigStore = create<ConfigState>()(
     }),
     {
       name: 'jira-dashboard-config',
-      version: 1,
-      migrate: (persisted: unknown, version: number) => {
+      version: 3,
+      migrate: (persisted: unknown) => {
         const state = persisted as ConfigState;
-        if (version === 0 && state.corsProxy?.includes('cors-anywhere')) {
-          // Migrate away from cors-anywhere to Vite's built-in proxy
-          return { ...state, corsProxy: '/jira-proxy/' };
-        }
-        return state;
+        return {
+          ...state,
+          corsProxy: state.corsProxy && !state.corsProxy.includes('cors-anywhere')
+            ? state.corsProxy
+            : '/jira-proxy/',
+        };
       },
     }
   )

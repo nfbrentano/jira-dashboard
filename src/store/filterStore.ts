@@ -14,7 +14,7 @@ interface FilterState {
 
 export const useFilterStore = create<FilterState>((set) => ({
   projectKey: '',
-  sprint: 'active',
+  sprint: 'all',
   types: [],
   epics: [],
   assignees: [],
@@ -22,7 +22,7 @@ export const useFilterStore = create<FilterState>((set) => ({
   dateRange: '30d',
   setFilter: (key, value) => set((state) => ({ ...state, [key]: value })),
   clearFilters: () => set({
-    sprint: 'active',
+    sprint: 'all',
     types: [],
     epics: [],
     assignees: [],

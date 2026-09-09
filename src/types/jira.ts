@@ -32,8 +32,18 @@ export interface JiraIssue {
       name: string;
     }>;
   };
+  changelog?: {
+    histories: Array<{
+      created: string;
+      items: Array<{
+        field: string;
+        fieldtype: string;
+        fromString: string;
+        toString: string;
+      }>;
+    }>;
+  };
 }
-
 export interface JiraProject {
   id: string;
   key: string;
