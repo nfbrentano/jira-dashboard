@@ -57,21 +57,23 @@ export const fetchProjects = async () => {
 
 export const fetchIssues = async (jql: string, startAt = 0, maxResults = 100) => {
   const api = getJiraApi();
-  const response = await api.post('/rest/api/3/search', {
-    jql,
-    startAt,
-    maxResults,
-    fields: [
-      'summary',
-      'status',
-      'assignee',
-      'priority',
-      'issuetype',
-      'created',
-      'updated',
-      'customfield_10016', // SP
-      'fixVersions'
-    ],
+  const response = await api.get('/rest/api/3/search', {
+    params: {
+      jql,
+      startAt,
+      maxResults,
+      fields: [
+        'summary',
+        'status',
+        'assignee',
+        'priority',
+        'issuetype',
+        'created',
+        'updated',
+        'customfield_10016', // SP
+        'fixVersions'
+      ].join(',')
+    }
   });
   return response.data;
 };

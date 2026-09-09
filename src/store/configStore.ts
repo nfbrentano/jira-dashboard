@@ -17,7 +17,7 @@ export const useConfigStore = create<ConfigState>()(
       jiraDomain: '',
       email: '',
       apiToken: '',
-      corsProxy: 'https://cors-anywhere.herokuapp.com/?url=', // Default fallback for dev
+      corsProxy: '/jira-proxy/', // Use Vite's built-in dev proxy (no external service needed)
       setConfig: (config) => set((state) => ({ ...state, ...config })),
       clearConfig: () => set({ jiraDomain: '', email: '', apiToken: '', corsProxy: '' }),
       isConfigured: () => {
@@ -27,6 +27,15 @@ export const useConfigStore = create<ConfigState>()(
     }),
     {
       name: 'jira-dashboard-config',
+      version: 1,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as ConfigState;
+        if (version === 0 && state.corsProxy?.includes('cors-anywhere')) {
+          // Migrate away from cors-anywhere to Vite's built-in proxy
+          return { ...state, corsProxy: '/jira-proxy/' };
+        }
+        return state;
+      },
     }
   )
 );
