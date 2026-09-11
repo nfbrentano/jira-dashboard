@@ -11,16 +11,17 @@
 @layer base {
   :root {
     --background: #f8fafc;
-    --surface: #ffffff;
+    --surface: rgba(255, 255, 255, 0.8);
     --border: #e2e8f0;
     --text-main: #0f172a;
     --text-muted: #64748b;
   }
 
   .dark {
-    --background: #0f172a;
-    --surface: #1e293b;
-    --border: #334155;
+    /* Tons de azul-ciano e roxo-lavanda para o fundo */
+    --background: #09090b; /* Very dark slate/blue */
+    --surface: rgba(15, 23, 42, 0.65); /* Glass surface */
+    --border: rgba(51, 65, 85, 0.5);
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
   }
@@ -28,6 +29,7 @@
   body {
     background-color: var(--background);
     color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;

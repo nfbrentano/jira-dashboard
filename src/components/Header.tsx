@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-surface px-6 flex items-center justify-between sticky top-0 z-40">
+    <header className="h-16 border-b border-border bg-surface/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-40 transition-colors duration-200">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-blue-600 rounded-lg text-white">
           <LayoutDashboard size={20} />

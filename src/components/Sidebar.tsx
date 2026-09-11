@@ -11,7 +11,7 @@ const navItems = [
 
 export const Sidebar: React.FC = () => {
   return (
-    <aside className="w-64 border-r border-border bg-surface h-[calc(100vh-4rem)] flex flex-col py-6 px-4 shrink-0">
+    <aside className="w-64 border-r border-border bg-surface/90 backdrop-blur-md h-[calc(100vh-4rem)] flex flex-col py-6 px-4 shrink-0 transition-colors duration-200">
       <nav className="space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;

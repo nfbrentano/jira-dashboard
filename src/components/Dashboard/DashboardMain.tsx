@@ -102,7 +102,7 @@ export const DashboardMain: React.FC = () => {
       )}
 
       {/* Issues Table */}
-      <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-surface/80 backdrop-blur-md border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
         <div className="p-4 border-b border-border flex items-center justify-between">
           <h3 className="font-semibold text-text-main">Tarefas do Projeto</h3>
         </div>

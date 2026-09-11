@@ -8,7 +8,7 @@ export const KPICards: React.FC = () => {
   if (isLoading) {
     return <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 animate-pulse">
       {[...Array(6)].map((_, i) => (
-        <div key={i} className="bg-surface border border-border rounded-xl p-4 h-24"></div>
+        <div key={i} className="bg-surface/80 backdrop-blur-md border border-border rounded-xl p-4 h-24"></div>
       ))}
     </div>;
   }
@@ -51,7 +51,7 @@ const Card = ({ title, value, icon: Icon, color }: { title: string, value: numbe
   };
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+    <div className="bg-surface/80 backdrop-blur-md border border-border rounded-xl p-4 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
       <div className="flex justify-between items-start">
         <span className="text-sm font-medium text-text-muted">{title}</span>
         <div className={`p-2 rounded-lg ${colorMap[color] || colorMap.blue}`}>

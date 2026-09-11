@@ -8,7 +8,7 @@ export const GlobalFilters: React.FC = () => {
   const clearFilters = useFilterStore(state => state.clearFilters);
 
   return (
-    <div className="bg-surface border-b border-border p-4 sticky top-16 z-30 flex flex-wrap gap-4 items-center">
+    <div className="bg-surface/90 backdrop-blur-md border-b border-border p-4 sticky top-16 z-30 flex flex-wrap gap-4 items-center transition-colors duration-200">
       <div className="flex flex-col">
         <label className="text-xs font-semibold text-text-muted mb-1 uppercase tracking-wider">Project</label>
         <select 
