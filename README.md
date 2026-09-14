@@ -59,8 +59,10 @@ Consulte os guias detalhados:
 
 ---
 
-## 📄 Licença e Conformidade
+## 📄 Licença, Privacidade e Termos de Uso
 
 Distribuído sob a licença [MIT](file:///Users/natanaelfernandogattibrentano/jira-dashboard/LICENSE).
-Política de Privacidade disponível em [PRIVACY.md](file:///Users/natanaelfernandogattibrentano/jira-dashboard/PRIVACY.md).
-Termos de Serviço disponíveis em [TERMS.md](file:///Users/natanaelfernandogattibrentano/jira-dashboard/TERMS.md).
+
+- 🛡️ **Portal de Conformidade e Segurança:** [https://nfbrentano.github.io/jira-dashboard/](https://nfbrentano.github.io/jira-dashboard/)
+- 🔒 **Política de Privacidade Online:** [https://nfbrentano.github.io/jira-dashboard/privacy.html](https://nfbrentano.github.io/jira-dashboard/privacy.html) (ou [PRIVACY.md](file:///Users/natanaelfernandogattibrentano/jira-dashboard/PRIVACY.md))
+- 📜 **Termos de Serviço Online:** [https://nfbrentano.github.io/jira-dashboard/terms.html](https://nfbrentano.github.io/jira-dashboard/terms.html) (ou [TERMS.md](file:///Users/natanaelfernandogattibrentano/jira-dashboard/TERMS.md))

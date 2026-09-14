@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal & Security Portal - Agile Ops & Delivery Dashboard for Jira</title>
+  <meta name="description" content="Official Legal, Privacy, and Terms of Service portal for Agile Ops & Delivery Dashboard for Atlassian Jira Cloud.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230052cc'%3E%3Cpath d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>Agile Ops & Delivery Dashboard</h1>
+          <p>Legal & Compliance Portal</p>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Overview</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer" class="btn-github">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="page-container">
+    
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="badge-row">
+        <span class="badge badge-forge">Atlassian Forge Native</span>
+        <span class="badge badge-security">Zero External Data Storage</span>
+        <span class="badge badge-version">v1.0.0</span>
+      </div>
+      <h2>Legal & Security Information</h2>
+      <p class="subtitle">
+        Agile Ops & Delivery Dashboard delivers delivery flow metrics, WIP limits, backlog aging, and defect quality analytics directly within Jira Cloud with enterprise-grade data privacy and zero external servers.
+      </p>
+      <div class="meta-bar">
+        <span><strong>Platform:</strong> Atlassian Forge (Cloud)</span>
+        <span><strong>Publisher:</strong> nfbrentano</span>
+        <span><strong>Open Source & Documented:</strong> Yes</span>
+      </div>
+    </section>
+
+    <!-- Hub Cards Navigation -->
+    <div class="hub-grid">
+      
+      <a href="privacy.html" class="hub-card">
+        <div class="hub-card-icon privacy">🛡️</div>
+        <h3>Privacy Policy</h3>
+        <p>
+          Details how your Jira data is accessed, processed, and safeguarded. Built with zero external database replication, no analytics trackers, and minimal OAuth scopes.
+        </p>
+        <span class="card-cta">Read Privacy Policy &rarr;</span>
+      </a>
+
+      <a href="terms.html" class="hub-card">
+        <div class="hub-card-icon terms">📜</div>
+        <h3>Terms of Service</h3>
+        <p>
+          The governing terms, license scope, customer responsibilities, and operational conditions for using the App in your Jira Cloud instance.
+        </p>
+        <span class="card-cta">Read Terms of Service &rarr;</span>
+      </a>
+
+      <div class="hub-card" style="cursor: default;">
+        <div class="hub-card-icon security">🔒</div>
+        <h3>Security Architecture</h3>
+        <p>
+          Engineered natively on Atlassian Forge. All calculations run strictly inside Atlassian's secure cloud perimeter and your browser session using TLS 1.3 and Atlassian OAuth.
+        </p>
+        <span class="card-cta" style="color: var(--success-text);">✓ 100% Client & Cloud Sandbox</span>
+      </div>
+
+    </div>
+
+    <!-- Quick Architecture Summary Card -->
+    <article class="legal-article" style="margin-top: 1rem;">
+      <h2>Atlassian Marketplace Security & Architecture Highlights</h2>
+      
+      <div class="callout callout-success">
+        <h4>🔒 Zero Customer Data Storage Outside Jira</h4>
+        <p>
+          Unlike legacy cloud plugins that synchronize tickets to third-party AWS or GCP databases, <strong>Agile Ops & Delivery Dashboard runs 100% inside the Atlassian Forge runtime</strong>. Your Jira data never leaves Atlassian's ecosystem.
+        </p>
+      </div>
+
+      <h3>Permissions & Scopes Requested</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>OAuth Scope</th>
+            <th>Required For</th>
+            <th>Sensitivity Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>read:jira-work</code></td>
+            <td>Reading issue keys, statuses, timestamps, and components to compute throughput, lead time, cycle time, and defect density.</td>
+            <td>Read-Only (Standard)</td>
+          </tr>
+          <tr>
+            <td><code>read:jira-user</code></td>
+            <td>Rendering assignee names and avatars on WIP charts and bug attribution lists.</td>
+            <td>Read-Only (Standard)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Compliance & Regulations</h3>
+      <ul>
+        <li><strong>GDPR / LGPD:</strong> Fully compliant by design through data minimization and zero external storage.</li>
+        <li><strong>Content Security Policy (CSP):</strong> Enforced strictly by the Forge Custom UI bridge.</li>
+        <li><strong>Atlassian Marketplace Partner Requirements:</strong> Meets all listing criteria for public distribution.</li>
+      </ul>
+
+      <h3>Support & Contact</h3>
+      <p>
+        For technical support, feature requests, or security vulnerability reports:
+      </p>
+      <ul>
+        <li><strong>GitHub Repository:</strong> <a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer">https://github.com/nfbrentano/jira-dashboard</a></li>
+        <li><strong>Bug Reports & Questions:</strong> <a href="https://github.com/nfbrentano/jira-dashboard/issues" target="_blank" rel="noopener noreferrer">Create an issue on GitHub</a></li>
+      </ul>
+    </article>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; 2026 Agile Ops & Delivery Dashboard for Jira. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="index.html">Overview</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+        <li><a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

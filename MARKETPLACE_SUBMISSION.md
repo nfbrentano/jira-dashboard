@@ -99,12 +99,12 @@ Built natively on the **Atlassian Forge** platform, it connects directly with yo
 
 ---
 
-## 🔗 Links Legais Obrigatórios (Já criados no projeto)
+## 🔗 Links Legais Obrigatórios (Publicados e Acessíveis na Web)
 
-Ao preencher o formulário, informe os links correspondentes:
-- **Privacy Policy URL:** Aponte para o arquivo [PRIVACY.md](PRIVACY.md) hospedado ou publicado (ex: no seu GitHub ou site).
-- **Terms of Service URL:** Aponte para o arquivo [TERMS.md](TERMS.md).
-- **Documentation / Support URL:** Link do seu repositório ou página de suporte (`https://github.com/nfbrentano/jira-dashboard`).
+Ao preencher o formulário no Partner Portal da Atlassian, informe exatamente estes links públicos:
+- **Privacy Policy URL:** `https://nfbrentano.github.io/jira-dashboard/privacy.html`
+- **Terms of Service URL:** `https://nfbrentano.github.io/jira-dashboard/terms.html`
+- **Documentation / Support URL:** `https://nfbrentano.github.io/jira-dashboard/` (ou `https://github.com/nfbrentano/jira-dashboard`)
 
 ---
 

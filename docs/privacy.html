@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Agile Ops & Delivery Dashboard for Jira</title>
+  <meta name="description" content="Privacy Policy for Agile Ops & Delivery Dashboard for Jira Cloud. Explaining our 100% Atlassian Forge serverless architecture and zero external data retention.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230052cc'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/%3E%3C/svg%3E">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>Agile Ops & Delivery Dashboard</h1>
+          <p>Legal & Compliance Portal</p>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="privacy.html" class="active">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer" class="btn-github">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="page-container">
+    
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="badge-row">
+        <span class="badge badge-forge">Atlassian Forge Native</span>
+        <span class="badge badge-security">Zero External Data Storage</span>
+        <span class="badge badge-version">v1.0.0</span>
+      </div>
+      <h2>Privacy Policy</h2>
+      <p class="subtitle">
+        We prioritize your privacy and data sovereignty. Agile Ops & Delivery Dashboard operates entirely within Atlassian's secure Cloud sandbox with zero third-party telemetry or external data retention.
+      </p>
+      <div class="meta-bar">
+        <span><strong>Effective Date:</strong> September 14, 2026</span>
+        <span><strong>Last Updated:</strong> September 14, 2026</span>
+        <span><strong>Hosting Model:</strong> Atlassian Forge (Cloud)</span>
+      </div>
+    </section>
+
+    <!-- Layout Grid -->
+    <div class="legal-layout">
+      
+      <!-- Sticky Navigation -->
+      <aside class="table-of-contents">
+        <h3>Contents</h3>
+        <ul>
+          <li><a href="#overview">1. Overview & Architecture</a></li>
+          <li><a href="#data-accessed">2. Information Accessed & Scopes</a></li>
+          <li><a href="#data-storage">3. Data Storage & Retention</a></li>
+          <li><a href="#subprocessors">4. Subprocessors & Third Parties</a></li>
+          <li><a href="#security">5. Security & Isolation</a></li>
+          <li><a href="#compliance">6. GDPR, LGPD & User Rights</a></li>
+          <li><a href="#updates">7. Policy Updates</a></li>
+          <li><a href="#contact">8. Contact & Support</a></li>
+        </ul>
+      </aside>
+
+      <!-- Legal Document Body -->
+      <article class="legal-article">
+
+        <section id="overview">
+          <h2>1. Overview & Architecture</h2>
+          <p>
+            This Privacy Policy describes how <strong>Agile Ops & Delivery Dashboard for Jira</strong> ("the App", "we", "our") handles information when installed by organizations or individual users ("you", "Customer") within Atlassian Jira Cloud instances.
+          </p>
+          <div class="callout callout-success">
+            <h4>🛡️ 100% Serverless & Forge Native Guarantee</h4>
+            <p>
+              The App is engineered exclusively using <strong>Atlassian Forge</strong>, Atlassian's trusted serverless app development platform. The App runs strictly within Atlassian Cloud infrastructure and your local browser session. We do <strong>not</strong> operate any external application servers, external databases, or third-party tracking relays.
+            </p>
+          </div>
+          <p>
+            All delivery velocity, throughput, lead/cycle time, WIP limit, and quality calculations are computed ephemerally in-memory inside the user's browser via the official Atlassian Forge bridge (<code>@forge/bridge</code>).
+          </p>
+        </section>
+
+        <section id="data-accessed">
+          <h2>2. Information Accessed & Permissions (Scopes)</h2>
+          <p>
+            To deliver operational agility charts and analytics, the App requests only the minimal necessary OAuth scopes defined in the Atlassian Forge manifest:
+          </p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Forge Scope</th>
+                <th>Purpose</th>
+                <th>Data Accessed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>read:jira-work</code></td>
+                <td>Generate delivery flow, velocity, and defect metrics.</td>
+                <td>Issue keys, summaries, issue types, status transitions, created/resolved timestamps, resolution status, components, and labels.</td>
+              </tr>
+              <tr>
+                <td><code>read:jira-user</code></td>
+                <td>Display responsible owners on defect and WIP limit charts.</td>
+                <td>User display names and public Atlassian avatar URLs strictly as rendered in Jira.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            The App <strong>never</strong> requests write permissions, administrative permissions, or access to sensitive issue attachments, passwords, or billing details.
+          </p>
+        </section>
+
+        <section id="data-storage">
+          <h2>3. Data Storage & Retention</h2>
+          <p>
+            Our core privacy principle is simple: <strong>Your data remains in your Jira instance.</strong>
+          </p>
+          <ul>
+            <li><strong>No External Storage:</strong> We do not store, duplicate, or mirror your Jira issues, project metadata, or team information on any remote servers.</li>
+            <li><strong>Ephemeral Computation:</strong> Issue data fetched via the Jira REST API is held temporarily in the browser's active memory (RAM) while you view the dashboard. When you navigate away or close your browser tab, this data is automatically purged.</li>
+            <li><strong>User Configuration:</strong> UI preferences (such as selected project filters, date windows, or custom WIP thresholds) are saved strictly inside your browser's local storage (<code>localStorage</code>) or Atlassian's secure Forge Storage API.</li>
+          </ul>
+        </section>
+
+        <section id="subprocessors">
+          <h2>4. Subprocessors & Third-Party Services</h2>
+          <p>
+            Because the App is built natively on Atlassian Forge:
+          </p>
+          <ul>
+            <li><strong>No External Subprocessors:</strong> We do not employ third-party cloud hosting providers, external analytics vendors (e.g., Google Analytics, Mixpanel), or advertising trackers.</li>
+            <li><strong>Atlassian Cloud Platform:</strong> All hosting, code execution, and data transmission are handled solely by <strong>Atlassian Pty Ltd</strong> in accordance with their <a href="https://www.atlassian.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Atlassian Privacy Policy</a> and <a href="https://www.atlassian.com/trust" target="_blank" rel="noopener noreferrer">Atlassian Trust Center</a>.</li>
+          </ul>
+        </section>
+
+        <section id="security">
+          <h2>5. Security & Isolation Controls</h2>
+          <p>
+            The App adheres to the security criteria established by the <strong>Atlassian Marketplace Security Program</strong>:
+          </p>
+          <ul>
+            <li><strong>Authentication & Authorization:</strong> Authentication is handled natively by Atlassian Cloud. Only authenticated users with legitimate permissions in your Jira tenant can access the dashboard.</li>
+            <li><strong>Content Security Policy (CSP):</strong> Forge enforces rigorous Content Security Policies that block unauthorized outbound network connections, cross-site scripting (XSS), and third-party script injection.</li>
+            <li><strong>Role-Based Access Control:</strong> The App respects Jira's native project permissions. A user will only see issues and projects they are already authorized to view in Jira.</li>
+            <li><strong>Encrypted in Transit:</strong> All communications between the user interface and Atlassian APIs utilize TLS 1.3 encryption.</li>
+          </ul>
+        </section>
+
+        <section id="compliance">
+          <h2>6. GDPR, LGPD & International User Rights</h2>
+          <p>
+            We comply with global data protection standards including the <strong>General Data Protection Regulation (GDPR)</strong>, the Brazilian <strong>Lei Geral de Proteção de Dados (LGPD)</strong>, and the <strong>California Consumer Privacy Act (CCPA)</strong>:
+          </p>
+          <ul>
+            <li><strong>Right to Erasure & Access:</strong> Since we do not harvest or retain personal data on external servers, uninstalling the App immediately severs all access. Any local settings stored in your browser can be cleared by purging browser storage or Atlassian Forge app data.</li>
+            <li><strong>Data Portability & Minimization:</strong> Data accessed is strictly limited to the minimum necessary for the dashboard's operation.</li>
+          </ul>
+        </section>
+
+        <section id="updates">
+          <h2>7. Policy Updates</h2>
+          <p>
+            We may periodically update this Privacy Policy to reflect changes in our practices or Atlassian Forge platform requirements. When updates occur, the "Last Updated" date at the top of this document will be revised accordingly.
+          </p>
+        </section>
+
+        <section id="contact">
+          <h2>8. Contact & Support</h2>
+          <p>
+            If you have any questions, inquiries, or security-related concerns regarding this Privacy Policy, please contact us:
+          </p>
+          <ul>
+            <li><strong>Developer & Support Inquiries:</strong> <a href="https://github.com/nfbrentano/jira-dashboard/issues" target="_blank" rel="noopener noreferrer">GitHub Issue Tracker</a></li>
+            <li><strong>Source Repository:</strong> <a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer">https://github.com/nfbrentano/jira-dashboard</a></li>
+            <li><strong>Marketplace Listing:</strong> <a href="https://marketplace.atlassian.com" target="_blank" rel="noopener noreferrer">Atlassian Marketplace</a></li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; 2026 Agile Ops & Delivery Dashboard for Jira. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="index.html">Overview</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+        <li><a href="https://github.com/nfbrentano/jira-dashboard" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

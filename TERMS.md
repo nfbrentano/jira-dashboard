@@ -1,6 +1,7 @@
 # Terms of Service - Agile Ops & Delivery Dashboard for Jira
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 14, 2026  
+**Online Version:** [https://nfbrentano.github.io/jira-dashboard/terms.html](https://nfbrentano.github.io/jira-dashboard/terms.html)
 
 Please read these Terms of Service ("Terms") carefully before installing or using the **Agile Ops & Delivery Dashboard** application ("the App") within your Atlassian Jira Cloud environment.
 

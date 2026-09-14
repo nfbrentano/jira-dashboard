@@ -1,6 +1,7 @@
 # Privacy Policy - Agile Ops & Delivery Dashboard for Jira
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 14, 2026  
+**Online Version:** [https://nfbrentano.github.io/jira-dashboard/privacy.html](https://nfbrentano.github.io/jira-dashboard/privacy.html)
 
 This Privacy Policy explains how **Agile Ops & Delivery Dashboard** ("the App", "we", "our") collects, uses, and protects information when installed and used within your Atlassian Jira Cloud instance.
 
