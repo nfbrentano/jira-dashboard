@@ -1,15 +1,26 @@
 {
-  "name": "temp-app",
+  "name": "agile-ops-dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Agile Ops & Delivery Dashboard for Jira Cloud - Flow Metrics, WIP Limits, Backlog Aging and Quality Analytics",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "forge": "forge",
+    "forge:login": "forge login",
+    "forge:register": "forge register",
+    "forge:deploy": "npm run build && forge deploy",
+    "forge:deploy:prod": "npm run build && forge deploy -e production",
+    "forge:install": "forge install",
+    "forge:install:prod": "forge install -e production",
+    "forge:lint": "forge lint",
+    "forge:tunnel": "forge tunnel"
   },
   "dependencies": {
+    "@forge/bridge": "^7.0.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/react-query": "^5.102.8",
     "@types/papaparse": "^5.5.2",
@@ -30,6 +41,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@forge/cli": "^14.0.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useConfigStore } from './store/configStore';
 import { ConfigForm } from './components/Setup/ConfigForm';
 import { Header } from './components/Header';
@@ -6,6 +6,7 @@ import { Sidebar } from './components/Sidebar';
 import { GlobalFilters } from './components/GlobalFilters';
 
 import { DashboardMain } from './components/Dashboard/DashboardMain';
+import { SectorMetricsMain } from './components/SectorMetrics/SectorMetricsMain';
 import { BacklogMain } from './components/Backlog/BacklogMain';
 import { QualityMain } from './components/Quality/QualityMain';
 
@@ -13,7 +14,7 @@ function App() {
   const isConfigured = useConfigStore(state => state.isConfigured());
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="min-h-screen bg-background text-text-main flex flex-col">
         {!isConfigured ? (
           <ConfigForm />
@@ -27,6 +28,7 @@ function App() {
                 <main className="flex-1">
                   <Routes>
                     <Route path="/" element={<DashboardMain />} />
+                    <Route path="/indicadores" element={<SectorMetricsMain />} />
                     <Route path="/backlog" element={<BacklogMain />} />
                     <Route path="/quality" element={<QualityMain />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
@@ -37,7 +39,7 @@ function App() {
           </>
         )}
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

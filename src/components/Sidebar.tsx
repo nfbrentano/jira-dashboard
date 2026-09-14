@@ -1,10 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ListTodo, Bug } from 'lucide-react';
+import { LayoutDashboard, ListTodo, Bug, Target } from 'lucide-react';
 import clsx from 'clsx';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/indicadores', label: 'Indicadores Setoriais', icon: Target },
   { path: '/backlog', label: 'Backlog', icon: ListTodo },
   { path: '/quality', label: 'Quality & Bugs', icon: Bug },
 ];

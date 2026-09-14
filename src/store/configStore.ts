@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export const isForgeEnvironment = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return window.self !== window.top;
+};
+
 export interface ConfigState {
   jiraDomain: string;
   email: string;
@@ -9,6 +14,7 @@ export interface ConfigState {
   setConfig: (config: Partial<ConfigState>) => void;
   clearConfig: () => void;
   isConfigured: () => boolean;
+  isForge: () => boolean;
 }
 
 export const useConfigStore = create<ConfigState>()(
@@ -20,7 +26,11 @@ export const useConfigStore = create<ConfigState>()(
       corsProxy: '/jira-proxy/',
       setConfig: (config) => set((state) => ({ ...state, ...config })),
       clearConfig: () => set({ jiraDomain: '', email: '', apiToken: '', corsProxy: '/jira-proxy/' }),
+      isForge: () => isForgeEnvironment(),
       isConfigured: () => {
+        if (isForgeEnvironment()) {
+          return true;
+        }
         const { jiraDomain, email, apiToken } = get();
         return !!(jiraDomain && email && apiToken);
       },

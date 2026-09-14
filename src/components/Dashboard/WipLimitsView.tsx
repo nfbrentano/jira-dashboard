@@ -32,13 +32,25 @@ export const WipLimitsView: React.FC = () => {
     return <div className="h-64 flex items-center justify-center text-text-muted animate-pulse">Loading limits...</div>;
   }
 
-  // Define limite = 1 tarefa In Progress por pessoa (regra estabelecida no plano)
-  const WIP_LIMIT = 1;
+  // Define limite = 2 tarefas In Progress por Dev (Meta Setorial ElevenCash: ≤ 2)
+  const WIP_LIMIT = 2;
+
+  const totalDevs = wipData.length;
+  const totalInProgress = wipData.reduce((acc, p) => acc + p.count, 0);
+  const avgWip = totalDevs > 0 ? (totalInProgress / totalDevs).toFixed(2) : '0';
 
   return (
     <div className="bg-surface border border-border rounded-xl p-4 shadow-sm h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-text-main">WIP Limits (Limite: {WIP_LIMIT})</h3>
+        <div>
+          <h3 className="font-semibold text-text-main">WIP Limits (Limite: ≤{WIP_LIMIT}/Dev)</h3>
+          <span className="text-xs text-text-muted">
+            Média: <strong className={Number(avgWip) > WIP_LIMIT ? 'text-rose-600' : 'text-emerald-600'}>{avgWip}</strong> tasks/dev
+          </span>
+        </div>
+        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-text-muted">
+          Campo DEV
+        </span>
       </div>
       
       <div className="flex-1 overflow-y-auto pr-2 space-y-3">

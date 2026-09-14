@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { KPICards } from './KPICards';
 import { useIssuesQuery } from '../../hooks/useIssuesQuery';
 import { useFilterStore } from '../../store/filterStore';
 import { useConfigStore } from '../../store/configStore';
-import { AlertCircle, ExternalLink, Download } from 'lucide-react';
+import { AlertCircle, ExternalLink, Download, Target } from 'lucide-react';
 import { StatusDistributionChart } from './StatusDistributionChart';
 import { ThroughputChart } from './ThroughputChart';
 import { WipLimitsView } from './WipLimitsView';
@@ -49,6 +50,14 @@ export const DashboardMain: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold text-text-main">Dashboard</h2>
+          <Link
+            to="/indicadores"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+            title="Acessar Indicadores Setoriais ElevenCash"
+          >
+            <Target size={16} />
+            <span>Indicadores Setoriais</span>
+          </Link>
           <button
             onClick={handleExportPng}
             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-text-main bg-surface border border-border rounded-lg hover:bg-background transition-colors"

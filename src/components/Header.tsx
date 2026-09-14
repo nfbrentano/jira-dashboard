@@ -1,6 +1,6 @@
 import React from 'react';
-import { useConfigStore } from '../store/configStore';
-import { LayoutDashboard, Moon, Sun, LogOut } from 'lucide-react';
+import { useConfigStore, isForgeEnvironment } from '../store/configStore';
+import { LayoutDashboard, Moon, Sun, LogOut, ShieldCheck } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { clearConfig } = useConfigStore();
@@ -40,13 +40,20 @@ export const Header: React.FC = () => {
         
         <div className="h-6 w-px bg-border"></div>
         
-        <button 
-          onClick={clearConfig}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-md transition-colors"
-        >
-          <LogOut size={16} />
-          <span>Disconnect</span>
-        </button>
+        {isForgeEnvironment() ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-md text-xs font-medium">
+            <ShieldCheck size={14} />
+            <span>Forge Atlassian Cloud</span>
+          </div>
+        ) : (
+          <button 
+            onClick={clearConfig}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-md transition-colors"
+          >
+            <LogOut size={16} />
+            <span>Disconnect</span>
+          </button>
+        )}
       </div>
     </header>
   );
