@@ -32,7 +32,7 @@ export const WipLimitsView: React.FC = () => {
     return <div className="h-64 flex items-center justify-center text-text-muted animate-pulse">Loading limits...</div>;
   }
 
-  // Define limite = 2 tarefas In Progress por Dev (Meta Setorial ElevenCash: ≤ 2)
+  // Define limite = 2 tarefas In Progress por Dev (Meta Setorial Padrão: ≤ 2)
   const WIP_LIMIT = 2;
 
   const totalDevs = wipData.length;

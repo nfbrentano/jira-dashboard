@@ -1,5 +1,7 @@
 import React from 'react';
 import type { SectorialData } from '../../store/sectorMetricsStore';
+import { useFilterStore } from '../../store/filterStore';
+import { useProjects } from '../../hooks/useIssuesQuery';
 import { Check, X, Info } from 'lucide-react';
 
 interface SectorMetricsTableProps {
@@ -13,6 +15,11 @@ export const SectorMetricsTable: React.FC<SectorMetricsTableProps> = ({
   isLive = false,
   onEditClick,
 }) => {
+  const { projectKey } = useFilterStore();
+  const { data: projects } = useProjects();
+  const currentProject = projects?.find((p) => p.key === projectKey);
+  const projectName = currentProject ? currentProject.name : projectKey || null;
+
   // Checks for goal achievement
   const isPeAchieved = data.pe.agregado >= 100;
   const isBusAchieved = data.bus.emExecucaoPico <= data.bus.maxLimit;
@@ -27,7 +34,7 @@ export const SectorMetricsTable: React.FC<SectorMetricsTableProps> = ({
         <div>
           <div className="flex items-center gap-2.5">
             <h2 className="text-xl sm:text-2xl font-bold text-text-main tracking-tight">
-              Indicadores Setoriais ElevenCash — {data.monthYear}
+              Indicadores Setoriais{projectName ? ` — ${projectName}` : ''} — {data.monthYear}
             </h2>
             {isLive ? (
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 animate-pulse flex items-center gap-1">
@@ -190,7 +197,7 @@ export const SectorMetricsTable: React.FC<SectorMetricsTableProps> = ({
           <Info size={14} className="text-blue-500" />
           <span>Legenda: ✓ Meta atingida no período &nbsp;|&nbsp; ✕ Meta não atingida / Atenção necessária</span>
         </div>
-        <span>ElevenCash Gestão Setorial</span>
+        <span>{projectName ? `${projectName} — Gestão Setorial` : 'Gestão Setorial & Entregas'}</span>
       </div>
     </div>
   );

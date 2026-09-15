@@ -65,6 +65,18 @@ const DEFAULT_AGOSTO_2026: SectorialData = {
   },
 };
 
+// Migrate legacy storage key if present
+if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+  try {
+    const legacyData = localStorage.getItem('elevencash-sector-metrics-storage');
+    if (legacyData && !localStorage.getItem('sector-metrics-storage')) {
+      localStorage.setItem('sector-metrics-storage', legacyData);
+    }
+  } catch (e) {
+    // ignore in case of sandboxed env
+  }
+}
+
 export const useSectorMetricsStore = create<SectorMetricsState>()(
   persist(
     (set) => ({
@@ -101,7 +113,7 @@ export const useSectorMetricsStore = create<SectorMetricsState>()(
         })),
     }),
     {
-      name: 'elevencash-sector-metrics-storage',
+      name: 'sector-metrics-storage',
     }
   )
 );

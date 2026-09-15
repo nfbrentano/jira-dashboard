@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useSectorMetricsStore, type SectorialData } from '../../store/sectorMetricsStore';
-import { useIssuesQuery } from '../../hooks/useIssuesQuery';
+import { useIssuesQuery, useProjects } from '../../hooks/useIssuesQuery';
+import { useFilterStore } from '../../store/filterStore';
 import { SectorMetricsTable } from './SectorMetricsTable';
 import { StrategicExecutionChart } from './StrategicExecutionChart';
 import { BusConcurrencyChart } from './BusConcurrencyChart';
@@ -17,6 +18,11 @@ export const SectorMetricsMain: React.FC = () => {
     setViewMode,
     updateMonthData,
   } = useSectorMetricsStore();
+
+  const { projectKey } = useFilterStore();
+  const { data: projects } = useProjects();
+  const currentProject = projects?.find((p) => p.key === projectKey);
+  const projectName = currentProject ? currentProject.name : projectKey || null;
 
   const { data: jiraData } = useIssuesQuery();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -116,7 +122,8 @@ export const SectorMetricsMain: React.FC = () => {
           },
         });
         const link = document.createElement('a');
-        link.download = `indicadores-setoriais-${selectedMonthId}-${new Date().toISOString().split('T')[0]}.png`;
+        const projectSlug = projectName ? `${projectName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-` : '';
+        link.download = `indicadores-setoriais-${projectSlug}${selectedMonthId}-${new Date().toISOString().split('T')[0]}.png`;
         link.href = dataUrl;
         link.click();
       } catch (err) {
@@ -132,9 +139,15 @@ export const SectorMetricsMain: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-text-main flex items-center gap-2">
             <span>Indicadores Setoriais</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-semibold">
-              ElevenCash
-            </span>
+            {projectName ? (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-semibold">
+                {projectName}
+              </span>
+            ) : (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-semibold">
+                Gestão Setorial
+              </span>
+            )}
           </h1>
           <p className="text-sm text-text-muted mt-0.5">
             Acompanhamento de metas estratégicas, vazão de chamados e controle de WIP
