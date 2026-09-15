@@ -25,7 +25,9 @@ export const SectorMetricsTable: React.FC<SectorMetricsTableProps> = ({
   const isBusAchieved = data.bus.emExecucaoPico <= data.bus.maxLimit;
   const isWipAchieved = data.wip.emExecucaoMediaDev <= data.wip.maxLimitPerDev;
 
-  const monthColLabel = data.monthYear.split('/')[0]?.slice(0, 3) || 'Mês';
+  const monthColLabel = data.monthYear.includes('/')
+    ? `${data.monthYear.split('/')[0].trim().slice(0, 3)}/${data.monthYear.split('/')[1]?.trim().slice(-2) || ''}`
+    : data.monthYear;
 
   return (
     <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-200">

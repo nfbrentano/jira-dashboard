@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import type { SectorialData } from '../../store/sectorMetricsStore';
-import { X, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  type SectorialData,
+  parseMonthId,
+  formatMonthLabel,
+} from '../../store/sectorMetricsStore';
+import { X, Save, Calendar, CheckCircle2, Clock } from 'lucide-react';
 
 interface Props {
   data: SectorialData;
@@ -17,7 +21,28 @@ export const SectorMetricsModal: React.FC<Props> = ({
 }) => {
   const [formData, setFormData] = useState<SectorialData>(data);
 
+  // Sync state whenever data prop changes or modal reopens
+  useEffect(() => {
+    setFormData(data);
+  }, [data, isOpen]);
+
   if (!isOpen) return null;
+
+  const handleMonthPickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newId = e.target.value; // e.g. "2026-09"
+    if (!newId) return;
+    const { year, month } = parseMonthId(newId);
+    const newLabel = formatMonthLabel(year, month);
+
+    setFormData((prev) => ({
+      ...prev,
+      id: newId,
+      monthYear: newLabel,
+      statusDescription: prev.statusDescription.includes('Apuração')
+        ? prev.statusDescription
+        : `Mês de apuração: ${newLabel}`,
+    }));
+  };
 
   const handlePeChange = (field: keyof SectorialData['pe'], val: string | number) => {
     setFormData((prev) => {
@@ -70,9 +95,12 @@ export const SectorMetricsModal: React.FC<Props> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
       <div className="bg-surface border border-border rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <h3 className="text-lg font-bold text-text-main">
-            Editar Indicadores Setoriais — {formData.monthYear}
-          </h3>
+          <div className="flex items-center gap-2">
+            <Calendar size={18} className="text-blue-600 dark:text-blue-400" />
+            <h3 className="text-lg font-bold text-text-main">
+              Configurar Período & Metas — {formData.monthYear}
+            </h3>
+          </div>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-background text-text-muted hover:text-text-main transition-colors"
@@ -82,31 +110,90 @@ export const SectorMetricsModal: React.FC<Props> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6">
-          {/* Header Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-semibold text-text-muted mb-1 block">
-                Mês / Período
-              </label>
-              <input
-                type="text"
-                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-text-main"
-                value={formData.monthYear}
-                onChange={(e) => setFormData({ ...formData, monthYear: e.target.value })}
-                required
-              />
+          {/* Header & Date Configuration */}
+          <div className="p-4 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20 space-y-4">
+            <h4 className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Calendar size={14} />
+              <span>Configuração do Período (Mês e Ano)</span>
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-text-muted mb-1 block">
+                  Seletor de Mês/Ano
+                </label>
+                <input
+                  type="month"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-main focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  value={formData.id.match(/^\d{4}-\d{2}$/) ? formData.id : ''}
+                  onChange={handleMonthPickerChange}
+                />
+                <span className="text-[11px] text-text-muted mt-0.5 block">
+                  Escolha o mês e ano desejados no calendário.
+                </span>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-text-muted mb-1 block">
+                  Nome de Exibição do Período
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-main focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  value={formData.monthYear}
+                  onChange={(e) => setFormData({ ...formData, monthYear: e.target.value })}
+                  placeholder="Ex: Agosto/2026"
+                  required
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-text-muted mb-1 block">
-                Texto de Apuração / Status
-              </label>
-              <input
-                type="text"
-                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-text-main"
-                value={formData.statusDescription}
-                onChange={(e) => setFormData({ ...formData, statusDescription: e.target.value })}
-                required
-              />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label className="text-xs font-semibold text-text-muted mb-1 block">
+                  Texto de Status / Apuração
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-main focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  value={formData.statusDescription}
+                  onChange={(e) => setFormData({ ...formData, statusDescription: e.target.value })}
+                  placeholder="Ex: Mês fechado. Apuração em 10/09/2026."
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-text-muted mb-1 block">
+                  Tipo de Relatório
+                </label>
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isClosed: true })}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 transition-colors ${
+                      formData.isClosed
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
+                        : 'bg-surface border-border text-text-muted hover:text-text-main'
+                    }`}
+                  >
+                    <CheckCircle2 size={13} />
+                    <span>Mês Fechado</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isClosed: false })}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 transition-colors ${
+                      !formData.isClosed
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
+                        : 'bg-surface border-border text-text-muted hover:text-text-main'
+                    }`}
+                  >
+                    <Clock size={13} />
+                    <span>Em Andamento</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -114,7 +201,9 @@ export const SectorMetricsModal: React.FC<Props> = ({
           <div className="p-4 rounded-xl border border-border/80 bg-background/60 space-y-3">
             <h4 className="font-semibold text-sm text-text-main flex items-center justify-between">
               <span>1. Planejamento Estratégico (PE)</span>
-              <span className="text-xs text-blue-600 font-bold">Agregado: {formData.pe.agregado}%</span>
+              <span className="text-xs text-blue-600 dark:text-blue-400 font-bold">
+                Agregado: {formData.pe.agregado}%
+              </span>
             </h4>
             <div className="grid grid-cols-3 gap-3">
               <div>
@@ -122,7 +211,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.pe.previsto}
                   onChange={(e) => handlePeChange('previsto', e.target.value)}
                 />
@@ -132,7 +221,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.pe.executado}
                   onChange={(e) => handlePeChange('executado', e.target.value)}
                 />
@@ -142,7 +231,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.pe.cancelado}
                   onChange={(e) => handlePeChange('cancelado', e.target.value)}
                 />
@@ -161,7 +250,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="1"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.bus.maxLimit}
                   onChange={(e) => handleBusChange('maxLimit', e.target.value)}
                 />
@@ -171,7 +260,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.bus.abertosNoMes}
                   onChange={(e) => handleBusChange('abertosNoMes', e.target.value)}
                 />
@@ -181,7 +270,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.bus.emExecucaoPico}
                   onChange={(e) => handleBusChange('emExecucaoPico', e.target.value)}
                 />
@@ -200,7 +289,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="1"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.wip.maxLimitPerDev}
                   onChange={(e) => handleWipChange('maxLimitPerDev', e.target.value)}
                 />
@@ -210,7 +299,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                 <input
                   type="number"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.wip.abertasNoMes}
                   onChange={(e) => handleWipChange('abertasNoMes', e.target.value)}
                 />
@@ -221,7 +310,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
                   type="number"
                   step="0.01"
                   min="0"
-                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm"
+                  className="w-full bg-surface border border-border rounded-lg px-3 py-1.5 text-sm text-text-main"
                   value={formData.wip.emExecucaoMediaDev}
                   onChange={(e) => handleWipChange('emExecucaoMediaDev', e.target.value)}
                 />
@@ -239,7 +328,7 @@ export const SectorMetricsModal: React.FC<Props> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
             >
               <Save size={16} />
               <span>Salvar Alterações</span>

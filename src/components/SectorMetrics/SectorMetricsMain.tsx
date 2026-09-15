@@ -1,5 +1,9 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { useSectorMetricsStore, type SectorialData } from '../../store/sectorMetricsStore';
+import {
+  useSectorMetricsStore,
+  type SectorialData,
+  createDefaultSectorialData,
+} from '../../store/sectorMetricsStore';
 import { useIssuesQuery, useProjects } from '../../hooks/useIssuesQuery';
 import { useFilterStore } from '../../store/filterStore';
 import { SectorMetricsTable } from './SectorMetricsTable';
@@ -8,13 +12,14 @@ import { BusConcurrencyChart } from './BusConcurrencyChart';
 import { WipPerDevChart } from './WipPerDevChart';
 import { SectorMetricsModal } from './SectorMetricsModal';
 import { toPng } from 'html-to-image';
-import { Download, Sliders, Sparkles } from 'lucide-react';
+import { Download, Sliders, Sparkles, Calendar, Plus } from 'lucide-react';
 
 export const SectorMetricsMain: React.FC = () => {
   const {
     selectedMonthId,
     viewMode,
     monthsData,
+    setSelectedMonth,
     setViewMode,
     updateMonthData,
   } = useSectorMetricsStore();
@@ -28,7 +33,15 @@ export const SectorMetricsMain: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentMonthData = monthsData[selectedMonthId] || monthsData['2026-08'];
+  const currentMonthData =
+    monthsData[selectedMonthId] ||
+    monthsData['2026-08'] ||
+    createDefaultSectorialData(selectedMonthId || '2026-08');
+
+  // Sorted list of available months for selection
+  const sortedMonths = useMemo(() => {
+    return Object.values(monthsData).sort((a, b) => b.id.localeCompare(a.id));
+  }, [monthsData]);
 
   // Computes dynamic live calculation based on current Jira issues in filter
   const liveData: SectorialData = useMemo(() => {
@@ -111,8 +124,8 @@ export const SectorMetricsMain: React.FC = () => {
   const handleExportPng = async () => {
     if (containerRef.current) {
       try {
-        const isDarkMode = document.documentElement.classList.contains('dark');
-        const backgroundColor = isDarkMode ? '#09090b' : '#f8fafc';
+        const isDark = document.documentElement.classList.contains('dark');
+        const backgroundColor = isDark ? '#0f172a' : '#f8fafc';
 
         const dataUrl = await toPng(containerRef.current, {
           cacheBust: true,
@@ -132,10 +145,14 @@ export const SectorMetricsMain: React.FC = () => {
     }
   };
 
+  const handleAddNewPeriod = () => {
+    setIsEditModalOpen(true);
+  };
+
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto" ref={containerRef}>
       {/* Top Bar Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-main flex items-center gap-2">
             <span>Indicadores Setoriais</span>
@@ -155,6 +172,48 @@ export const SectorMetricsMain: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          {/* Month / Period Selector */}
+          <div className="bg-surface border border-border px-2.5 py-1.5 rounded-lg flex items-center gap-2 shadow-xs">
+            <Calendar size={14} className="text-blue-600 dark:text-blue-400 shrink-0" />
+            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider hidden sm:inline">
+              Mês:
+            </span>
+            <select
+              value={selectedMonthId}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="bg-transparent text-xs font-semibold text-text-main focus:outline-hidden cursor-pointer"
+            >
+              {sortedMonths.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.monthYear} {m.isClosed ? '(Consolidado)' : '(Em andamento)'}
+                </option>
+              ))}
+            </select>
+
+            {/* Quick Month / Year Picker */}
+            <input
+              type="month"
+              className="text-xs bg-background border border-border/80 rounded px-1.5 py-0.5 text-text-main hover:border-blue-500 focus:outline-hidden cursor-pointer w-28"
+              title="Escolha qualquer outro mês/ano no calendário"
+              value={selectedMonthId.match(/^\d{4}-\d{2}$/) ? selectedMonthId : ''}
+              onChange={(e) => {
+                if (e.target.value) {
+                  setSelectedMonth(e.target.value);
+                }
+              }}
+            />
+
+            <button
+              type="button"
+              onClick={handleAddNewPeriod}
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-0.5 pl-1 border-l border-border/70"
+              title="Adicionar ou configurar novo mês"
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              <span className="hidden sm:inline">Novo</span>
+            </button>
+          </div>
+
           {/* View Mode Toggle */}
           <div className="bg-surface border border-border p-1 rounded-lg flex items-center shadow-xs">
             <button
@@ -164,8 +223,9 @@ export const SectorMetricsMain: React.FC = () => {
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-text-muted hover:text-text-main'
               }`}
+              title="Exibir relatório com metas e apuração consolidada"
             >
-              Relatório Fechado (Ago/2026)
+              {currentMonthData.isClosed ? `Relatório Fechado (${currentMonthData.monthYear})` : `Consolidado (${currentMonthData.monthYear})`}
             </button>
             <button
               onClick={() => setViewMode('live')}
@@ -174,21 +234,24 @@ export const SectorMetricsMain: React.FC = () => {
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-text-muted hover:text-text-main'
               }`}
+              title="Calcular indicadores em tempo real das issues do Jira"
             >
               <Sparkles size={13} />
               <span>Ao Vivo (Jira)</span>
             </button>
           </div>
 
+          {/* Edit / Configure Button */}
           <button
             onClick={() => setIsEditModalOpen(true)}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-surface hover:bg-background text-text-main transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-            title="Editar valores e metas da apuração"
+            title="Configurar metas e valores do período"
           >
             <Sliders size={14} />
-            <span>Editar Metas</span>
+            <span>Configurar Metas</span>
           </button>
 
+          {/* Export PNG */}
           <button
             onClick={handleExportPng}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-surface hover:bg-background text-text-main transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
@@ -200,7 +263,7 @@ export const SectorMetricsMain: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Sector Metrics Table matching the image */}
+      {/* Main Sector Metrics Table */}
       <SectorMetricsTable
         data={activeDisplayData}
         isLive={viewMode === 'live'}
@@ -214,7 +277,9 @@ export const SectorMetricsMain: React.FC = () => {
             Diagnóstico Visual dos Indicadores
           </h3>
           <span className="text-xs text-text-muted">
-            Clique em "Ao Vivo (Jira)" para apurar os dados atuais do projeto selecionado
+            {viewMode === 'live'
+              ? 'Exibindo apuração ao vivo dos cards do Jira'
+              : `Exibindo valores consolidados do período: ${currentMonthData.monthYear}`}
           </span>
         </div>
 
@@ -225,12 +290,15 @@ export const SectorMetricsMain: React.FC = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
+      {/* Edit / Configure Modal */}
       <SectorMetricsModal
-        isOpen={isEditModalOpen}
         data={currentMonthData}
+        isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSave={(updated) => updateMonthData(selectedMonthId, updated)}
+        onSave={(updated) => {
+          updateMonthData(updated.id, updated);
+          setSelectedMonth(updated.id);
+        }}
       />
     </div>
   );
