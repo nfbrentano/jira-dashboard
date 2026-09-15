@@ -1,11 +1,14 @@
 import React from 'react';
 import { useFilterStore } from '../store/filterStore';
 import { useProjects } from '../hooks/useIssuesQuery';
+import { getLast12Months } from '../utils/dateRange';
 
 export const GlobalFilters: React.FC = () => {
   const { data: projects, isLoading: projectsLoading } = useProjects();
   const { projectKey, sprint, dateRange, setFilter } = useFilterStore();
   const clearFilters = useFilterStore(state => state.clearFilters);
+
+  const monthOptions = React.useMemo(() => getLast12Months(), []);
 
   return (
     <div className="bg-surface/90 backdrop-blur-md border-b border-border p-4 sticky top-16 z-30 flex flex-wrap gap-4 items-center transition-colors duration-200">
@@ -37,7 +40,7 @@ export const GlobalFilters: React.FC = () => {
         </select>
       </div>
 
-      {/* TODO: Add multi-selects for Types, Epics, Assignees, Priorities */}
+      {/* Date Range: Últimos 12 meses em ordem decrescente (ex: Agosto/2026) */}
       <div className="flex flex-col">
         <label className="text-xs font-semibold text-text-muted mb-1 uppercase tracking-wider">Date Range</label>
         <select 
@@ -45,10 +48,12 @@ export const GlobalFilters: React.FC = () => {
           value={dateRange}
           onChange={(e) => setFilter('dateRange', e.target.value)}
         >
-          <option value="7d">Last 7 Days</option>
-          <option value="30d">Last 30 Days</option>
-          <option value="90d">Last 90 Days</option>
-          <option value="all">All Time</option>
+          {monthOptions.map(option => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+          <option value="all">Últimos 12 meses</option>
         </select>
       </div>
 

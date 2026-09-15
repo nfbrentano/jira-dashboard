@@ -17,8 +17,8 @@ export const ThroughputChart: React.FC = () => {
     const countsByWeek: Record<string, number> = {};
     
     doneIssues.forEach(issue => {
-      // Usamos a data de atualização como aproximação de quando foi concluído
-      const dateStr = issue.fields?.updated;
+      // Priorizamos a data real de resolução (resolutiondate), com fallback para updated
+      const dateStr = issue.fields?.resolutiondate || issue.fields?.updated;
       if (dateStr) {
         const date = parseISO(dateStr);
         // Agrupa pelo início da semana

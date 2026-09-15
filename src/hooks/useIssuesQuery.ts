@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchIssues, fetchProjects } from '../services/jiraAPI';
 import { useFilterStore } from '../store/filterStore';
 import { useConfigStore } from '../store/configStore';
+import { buildDateRangeJql } from '../utils/dateRange';
 import type { JiraSearchResponse, JiraProject } from '../types/jira';
 
 export const useProjects = () => {
@@ -39,9 +40,14 @@ export const useIssuesQuery = () => {
         jql += ` AND priority in (${priorities.map(p => `"${p}"`).join(',')})`;
       }
 
-      // We can append dateRange, assignees, etc.
       if (assignees.length > 0) {
         jql += ` AND assignee in (${assignees.map(a => `"${a}"`).join(',')})`;
+      }
+
+      // Date range filtering: created OR resolved
+      const dateJql = buildDateRangeJql(dateRange);
+      if (dateJql) {
+        jql += ` AND ${dateJql}`;
       }
 
       jql += ` ORDER BY created DESC`;

@@ -27,6 +27,7 @@ export interface JiraIssue {
     };
     created: string;
     updated: string;
+    resolutiondate?: string | null;
     customfield_10016?: number; // Story Points (example custom field id, might need to be dynamic)
     fixVersions?: Array<{
       name: string;

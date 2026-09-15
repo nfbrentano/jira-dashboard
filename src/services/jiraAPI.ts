@@ -82,6 +82,7 @@ export const fetchIssues = async (jql: string, maxResults = 100) => {
     'issuetype',
     'created',
     'updated',
+    'resolutiondate',
     'customfield_10016', // Story Points
     'fixVersions',
   ].join(',');
