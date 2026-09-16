@@ -15,6 +15,8 @@ export interface ConfigState {
   clearConfig: () => void;
   isConfigured: () => boolean;
   isForge: () => boolean;
+  showSettings: boolean;
+  setShowSettings: (show: boolean) => void;
 }
 
 export const useConfigStore = create<ConfigState>()(
@@ -24,6 +26,8 @@ export const useConfigStore = create<ConfigState>()(
       email: '',
       apiToken: '',
       corsProxy: '/jira-proxy/',
+      showSettings: false,
+      setShowSettings: (show) => set({ showSettings: show }),
       setConfig: (config) => set((state) => ({ ...state, ...config })),
       clearConfig: () => set({ jiraDomain: '', email: '', apiToken: '', corsProxy: '/jira-proxy/' }),
       isForge: () => isForgeEnvironment(),

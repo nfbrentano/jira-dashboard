@@ -1,9 +1,9 @@
 import React from 'react';
 import { useConfigStore, isForgeEnvironment } from '../store/configStore';
-import { LayoutDashboard, Moon, Sun, LogOut, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Moon, Sun, LogOut, ShieldCheck, Settings } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { clearConfig } = useConfigStore();
+  const { clearConfig, setShowSettings } = useConfigStore();
   
   const [isDark, setIsDark] = React.useState(() => {
     return document.documentElement.classList.contains('dark');
@@ -36,6 +36,14 @@ export const Header: React.FC = () => {
           title="Toggle theme"
         >
           {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+        
+        <button 
+          onClick={() => setShowSettings(true)}
+          className="p-2 text-text-muted hover:text-text-main hover:bg-background rounded-full transition-colors"
+          title="Configurações"
+        >
+          <Settings size={20} />
         </button>
         
         <div className="h-6 w-px bg-border"></div>

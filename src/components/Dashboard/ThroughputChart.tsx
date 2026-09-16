@@ -14,7 +14,7 @@ export const ThroughputChart: React.FC = () => {
       issue => issue.fields?.status?.statusCategory?.key === 'done'
     );
 
-    const countsByWeek: Record<string, number> = {};
+    const countsByWeek: Record<string, { label: string, count: number }> = {};
     
     doneIssues.forEach(issue => {
       // Priorizamos a data real de resolução (resolutiondate), com fallback para updated
@@ -23,24 +23,22 @@ export const ThroughputChart: React.FC = () => {
         const date = parseISO(dateStr);
         // Agrupa pelo início da semana
         const weekStart = startOfWeek(date, { weekStartsOn: 1 }); // Começa na segunda-feira
+        const weekKey = format(weekStart, 'yyyy-MM-dd');
         const weekLabel = format(weekStart, 'dd/MM');
-        countsByWeek[weekLabel] = (countsByWeek[weekLabel] || 0) + 1;
+        
+        if (!countsByWeek[weekKey]) {
+          countsByWeek[weekKey] = { label: weekLabel, count: 0 };
+        }
+        countsByWeek[weekKey].count += 1;
       }
     });
 
     // Ordena as chaves de data cronologicamente
-    const sortedWeeks = Object.keys(countsByWeek).sort((a, b) => {
-      // Formato dd/MM - para ano cruza é melhor usar um label formatado e a chave como YYYY-MM-DD
-      // Simplificado assumindo mesmo ano para este exemplo
-      const [d1, m1] = a.split('/').map(Number);
-      const [d2, m2] = b.split('/').map(Number);
-      if (m1 !== m2) return m1 - m2;
-      return d1 - d2;
-    });
+    const sortedWeekKeys = Object.keys(countsByWeek).sort();
 
-    return sortedWeeks.map(week => ({
-      week,
-      completed: countsByWeek[week]
+    return sortedWeekKeys.map(key => ({
+      week: countsByWeek[key].label,
+      completed: countsByWeek[key].count
     }));
   }, [data?.issues]);
 

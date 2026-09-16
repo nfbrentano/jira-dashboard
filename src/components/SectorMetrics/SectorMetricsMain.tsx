@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import {
   useSectorMetricsStore,
   type SectorialData,
@@ -6,6 +6,7 @@ import {
 } from '../../store/sectorMetricsStore';
 import { useIssuesQuery, useProjects } from '../../hooks/useIssuesQuery';
 import { useFilterStore } from '../../store/filterStore';
+import { useFieldMappingStore } from '../../store/fieldMappingStore';
 import { SectorMetricsTable } from './SectorMetricsTable';
 import { StrategicExecutionChart } from './StrategicExecutionChart';
 import { BusConcurrencyChart } from './BusConcurrencyChart';
@@ -43,6 +44,8 @@ export const SectorMetricsMain: React.FC = () => {
     return Object.values(monthsData).sort((a, b) => b.id.localeCompare(a.id));
   }, [monthsData]);
 
+  const { config: mappingConfig } = useFieldMappingStore();
+
   // Computes dynamic live calculation based on current Jira issues in filter
   const liveData: SectorialData = useMemo(() => {
     if (!jiraData?.issues || jiraData.issues.length === 0) {
@@ -51,17 +54,18 @@ export const SectorMetricsMain: React.FC = () => {
 
     const issues = jiraData.issues;
 
-    // 1. PE (Strategic items: Epics or items with label/components or all resolved vs total)
-    const peIssues = issues.filter(
-      (i) =>
-        i.fields?.issuetype?.name?.toLowerCase().includes('epic') ||
-        i.fields?.issuetype?.name?.toLowerCase().includes('iniciativa') ||
-        i.fields?.summary?.toLowerCase().includes('[pe]')
+    // 1. PE (Strategic items: mapped in fieldMappingStore)
+    const peIssues = issues.filter((i) =>
+      mappingConfig.peIssueTypes.some(t => 
+        i.fields?.issuetype?.name?.toLowerCase() === t.toLowerCase()
+      )
     );
     const peTargetList = peIssues.length > 0 ? peIssues : issues;
     const pePrevisto = peTargetList.length;
-    const peExecutado = peTargetList.filter(
-      (i) => i.fields?.status?.statusCategory?.key === 'done'
+    const peExecutado = peTargetList.filter((i) => 
+      mappingConfig.statusMapping.done.some(s => 
+        i.fields?.status?.name?.toLowerCase() === s.toLowerCase()
+      ) || i.fields?.status?.statusCategory?.key === 'done'
     ).length;
     const peCancelado = peTargetList.filter(
       (i) =>
@@ -70,22 +74,25 @@ export const SectorMetricsMain: React.FC = () => {
     ).length;
     const peAgregado = pePrevisto > 0 ? Math.round((peExecutado / pePrevisto) * 100) : 0;
 
-    // 2. Bus (Interdepartmental tickets)
-    const busIssues = issues.filter(
-      (i) =>
-        i.fields?.issuetype?.name?.toLowerCase().includes('chamado') ||
-        i.fields?.issuetype?.name?.toLowerCase().includes('suporte') ||
-        i.fields?.summary?.toLowerCase().includes('bus')
+    // 2. Bus (Interdepartmental tickets: mapped in fieldMappingStore)
+    const busIssues = issues.filter((i) =>
+      mappingConfig.busIssueTypes.some(t => 
+        i.fields?.issuetype?.name?.toLowerCase() === t.toLowerCase()
+      )
     );
     const busList = busIssues.length > 0 ? busIssues : issues;
     const busAbertos = busList.length;
-    const busEmExecucao = busList.filter(
-      (i) => i.fields?.status?.statusCategory?.key === 'indeterminate'
+    const busEmExecucao = busList.filter((i) =>
+      mappingConfig.statusMapping.inProgress.some(s => 
+        i.fields?.status?.name?.toLowerCase() === s.toLowerCase()
+      ) || i.fields?.status?.statusCategory?.key === 'indeterminate'
     ).length;
 
     // 3. WIP Dev
-    const inProgressIssues = issues.filter(
-      (i) => i.fields?.status?.statusCategory?.key === 'indeterminate'
+    const inProgressIssues = issues.filter((i) =>
+      mappingConfig.statusMapping.inProgress.some(s => 
+        i.fields?.status?.name?.toLowerCase() === s.toLowerCase()
+      ) || i.fields?.status?.statusCategory?.key === 'indeterminate'
     );
     const assigneesWithTasks = new Set(
       inProgressIssues
@@ -99,6 +106,7 @@ export const SectorMetricsMain: React.FC = () => {
       ...currentMonthData,
       monthYear: 'Ao Vivo (Jira)',
       statusDescription: `Apuração em tempo real com base em ${issues.length} cards carregados.`,
+      isSeeded: true,
       pe: {
         ...currentMonthData.pe,
         previsto: pePrevisto,
@@ -117,7 +125,22 @@ export const SectorMetricsMain: React.FC = () => {
         emExecucaoMediaDev: wipAvg,
       },
     };
-  }, [jiraData?.issues, currentMonthData]);
+  }, [jiraData?.issues, currentMonthData, mappingConfig]);
+
+  // Auto-seed empty months with live data
+  useEffect(() => {
+    if (jiraData?.issues && jiraData.issues.length > 0) {
+      if (!currentMonthData.isSeeded && !currentMonthData.isClosed) {
+        // Auto seed! (only take the numeric data from liveData, keep original monthYear & description)
+        updateMonthData(selectedMonthId, {
+          isSeeded: true,
+          pe: liveData.pe,
+          bus: liveData.bus,
+          wip: liveData.wip,
+        });
+      }
+    }
+  }, [jiraData?.issues, currentMonthData, liveData, selectedMonthId, updateMonthData]);
 
   const activeDisplayData = viewMode === 'live' ? liveData : currentMonthData;
 

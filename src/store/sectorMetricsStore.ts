@@ -6,6 +6,7 @@ export interface SectorialData {
   monthYear: string; // e.g. "Agosto/2026"
   statusDescription: string; // e.g. "Mês fechado. Apuração em 10/09/2026."
   isClosed: boolean;
+  isSeeded?: boolean;
   pe: {
     targetDescription: string;
     previsto: number;
@@ -57,24 +58,25 @@ export const createDefaultSectorialData = (id: string, customLabel?: string): Se
     monthYear: label,
     statusDescription: `Apuração do período ${label}.`,
     isClosed: false,
+    isSeeded: false,
     pe: {
       targetDescription: '≥100% de execução do previsto para o Quarter',
-      previsto: 15,
-      executado: 12,
+      previsto: 0,
+      executado: 0,
       cancelado: 0,
-      agregado: 80,
+      agregado: 0,
     },
     bus: {
       targetDescription: 'MÁX 8 chamados simultâneos em execução',
       maxLimit: 8,
-      abertosNoMes: 30,
-      emExecucaoPico: 6,
+      abertosNoMes: 0,
+      emExecucaoPico: 0,
     },
     wip: {
       targetDescription: '≤2 tasks simultâneas em execução por Dev',
       maxLimitPerDev: 2,
-      abertasNoMes: 200,
-      emExecucaoMediaDev: 1.85,
+      abertasNoMes: 0,
+      emExecucaoMediaDev: 0,
       baseCalculo: 'Campo DEV',
     },
   };
@@ -92,59 +94,6 @@ export interface SectorMetricsState {
   deleteMonth: (id: string) => void;
 }
 
-const DEFAULT_AGOSTO_2026: SectorialData = {
-  id: '2026-08',
-  monthYear: 'Agosto/2026',
-  statusDescription: 'Mês fechado. Apuração em 10/09/2026.',
-  isClosed: true,
-  pe: {
-    targetDescription: '≥100% de execução do previsto para o Quarter',
-    previsto: 17,
-    executado: 15,
-    cancelado: 0,
-    agregado: 88, // 15 / 17 = 88.2%
-  },
-  bus: {
-    targetDescription: 'MÁX 8 chamados simultâneos em execução',
-    maxLimit: 8,
-    abertosNoMes: 37,
-    emExecucaoPico: 31,
-  },
-  wip: {
-    targetDescription: '≤2 tasks simultâneas em execução por Dev',
-    maxLimitPerDev: 2,
-    abertasNoMes: 239,
-    emExecucaoMediaDev: 2.33,
-    baseCalculo: 'Campo DEV',
-  },
-};
-
-const DEFAULT_SETEMBRO_2026: SectorialData = {
-  id: '2026-09',
-  monthYear: 'Setembro/2026',
-  statusDescription: 'Mês em andamento. Apuração prévia.',
-  isClosed: false,
-  pe: {
-    targetDescription: '≥100% de execução do previsto para o Quarter',
-    previsto: 18,
-    executado: 14,
-    cancelado: 1,
-    agregado: 78,
-  },
-  bus: {
-    targetDescription: 'MÁX 8 chamados simultâneos em execução',
-    maxLimit: 8,
-    abertosNoMes: 29,
-    emExecucaoPico: 7,
-  },
-  wip: {
-    targetDescription: '≤2 tasks simultâneas em execução por Dev',
-    maxLimitPerDev: 2,
-    abertasNoMes: 210,
-    emExecucaoMediaDev: 1.9,
-    baseCalculo: 'Campo DEV',
-  },
-};
 
 // Migrate legacy storage key if present
 if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
@@ -160,13 +109,14 @@ if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
 
 export const useSectorMetricsStore = create<SectorMetricsState>()(
   persist(
-    (set, get) => ({
-      selectedMonthId: '2026-08',
-      viewMode: 'closed',
-      monthsData: {
-        '2026-08': DEFAULT_AGOSTO_2026,
-        '2026-09': DEFAULT_SETEMBRO_2026,
-      },
+    (set, get) => {
+      const currentMonthId = formatMonthId(new Date().getFullYear(), new Date().getMonth() + 1);
+      return {
+        selectedMonthId: currentMonthId,
+        viewMode: 'closed',
+        monthsData: {
+          [currentMonthId]: createDefaultSectorialData(currentMonthId),
+        },
       setSelectedMonth: (id) => {
         const state = get();
         if (!state.monthsData[id]) {
@@ -228,7 +178,8 @@ export const useSectorMetricsStore = create<SectorMetricsState>()(
             selectedMonthId: nextSelected,
           };
         }),
-    }),
+      };
+    },
     {
       name: 'sector-metrics-storage',
     }

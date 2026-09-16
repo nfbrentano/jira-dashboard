@@ -30,15 +30,7 @@ export const WipPerDevChart: React.FC<Props> = ({ data, isLive = false }) => {
       }));
     }
 
-    // Default reference sample distribution matching August/2026 (Avg 2.33 tasks/dev)
-    return [
-      { name: 'Dev 1', tasks: 4, overLimit: true },
-      { name: 'Dev 2', tasks: 3, overLimit: true },
-      { name: 'Dev 3', tasks: 3, overLimit: true },
-      { name: 'Dev 4', tasks: 2, overLimit: false },
-      { name: 'Dev 5', tasks: 2, overLimit: false },
-      { name: 'Dev 6', tasks: 1, overLimit: false },
-    ];
+    return [];
   }, [isLive, jiraData?.issues, data.wip.maxLimitPerDev]);
 
   const isOk = data.wip.emExecucaoMediaDev <= data.wip.maxLimitPerDev;
@@ -82,32 +74,38 @@ export const WipPerDevChart: React.FC<Props> = ({ data, isLive = false }) => {
       </div>
 
       <div className="h-52 w-full mt-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={devDistribution} margin={{ top: 10, right: 10, left: -20, bottom: 15 }}>
-            <XAxis dataKey="name" stroke="#888888" fontSize={11} tickLine={false} axisLine={false} />
-            <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'var(--surface)',
-                borderColor: 'var(--border)',
-                borderRadius: '8px',
-                color: 'var(--text-main)',
-              }}
-              formatter={(val) => [`${val} tasks em execução`, 'WIP']}
-            />
-            <ReferenceLine
-              y={data.wip.maxLimitPerDev}
-              stroke="#10b981"
-              strokeDasharray="3 3"
-              label={{ value: `Meta: ${data.wip.maxLimitPerDev}`, fill: '#10b981', fontSize: 11, position: 'top' }}
-            />
-            <Bar dataKey="tasks" radius={[6, 6, 0, 0]}>
-              {devDistribution.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.overLimit ? '#f43f5e' : '#3b82f6'} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {devDistribution.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={devDistribution} margin={{ top: 10, right: 10, left: -20, bottom: 15 }}>
+              <XAxis dataKey="name" stroke="#888888" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  borderRadius: '8px',
+                  color: 'var(--text-main)',
+                }}
+                formatter={(val) => [`${val} tasks em execução`, 'WIP']}
+              />
+              <ReferenceLine
+                y={data.wip.maxLimitPerDev}
+                stroke="#10b981"
+                strokeDasharray="3 3"
+                label={{ value: `Meta: ${data.wip.maxLimitPerDev}`, fill: '#10b981', fontSize: 11, position: 'top' }}
+              />
+              <Bar dataKey="tasks" radius={[6, 6, 0, 0]}>
+                {devDistribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.overLimit ? '#f43f5e' : '#3b82f6'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full text-text-muted text-sm text-center px-4 bg-background rounded-lg border border-border border-dashed">
+            A distribuição por desenvolvedor está disponível apenas no modo "Ao Vivo".
+          </div>
+        )}
       </div>
     </div>
   );

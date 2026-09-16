@@ -12,13 +12,14 @@ import { QualityMain } from './components/Quality/QualityMain';
 
 function App() {
   const isConfigured = useConfigStore(state => state.isConfigured());
+  const showSettings = useConfigStore(state => state.showSettings);
 
   return (
     <HashRouter>
       <div className="min-h-screen bg-background text-text-main flex flex-col">
-        {!isConfigured ? (
-          <ConfigForm />
-        ) : (
+        {(!isConfigured || showSettings) && <ConfigForm />}
+        
+        {isConfigured && (
           <>
             <Header />
             <div className="flex flex-1 overflow-hidden">

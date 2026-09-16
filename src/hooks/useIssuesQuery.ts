@@ -36,6 +36,10 @@ export const useIssuesQuery = () => {
         jql += ` AND issuetype in (${types.map(t => `"${t}"`).join(',')})`;
       }
 
+      if (epics.length > 0) {
+        jql += ` AND "Epic Link" in (${epics.map(e => `"${e}"`).join(',')})`;
+      }
+
       if (priorities.length > 0) {
         jql += ` AND priority in (${priorities.map(p => `"${p}"`).join(',')})`;
       }

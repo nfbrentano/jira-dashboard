@@ -1,17 +1,19 @@
 import React, { useMemo } from 'react';
 import { useIssuesQuery } from '../../hooks/useIssuesQuery';
+import { useFieldMappingStore } from '../../store/fieldMappingStore';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
 import { differenceInDays, format } from 'date-fns';
 
 export const CycleTimeChart: React.FC = () => {
   const { data, isLoading } = useIssuesQuery();
+  const { config: mappingConfig } = useFieldMappingStore();
 
   const chartData = useMemo(() => {
     if (!data?.issues) return { points: [], average: 0 };
     
     // Pega apenas os itens que estão concluídos e têm changelog
     const doneIssues = data.issues.filter(
-      issue => issue.fields?.status?.statusCategory?.key === 'done' && issue.changelog
+      issue => (mappingConfig.statusMapping.done.some(s => issue.fields?.status?.name?.toLowerCase() === s.toLowerCase()) || issue.fields?.status?.statusCategory?.key === 'done') && issue.changelog
     );
 
     let totalDays = 0;
@@ -30,8 +32,12 @@ export const CycleTimeChart: React.FC = () => {
         const hasStatusChange = history.items.find(item => item.field === 'status');
         if (hasStatusChange) {
           const date = new Date(history.created);
-          // Primeira transição de status é considerada como o início do trabalho (simplificado)
-          if (!startWorkDate) {
+          
+          const isStarted = mappingConfig.statusMapping.inProgress.some(
+            s => hasStatusChange.toString?.toLowerCase() === s.toLowerCase()
+          );
+
+          if (isStarted && !startWorkDate) {
             startWorkDate = date;
           }
           // A última transição de status para concluído será capturada se atualizarmos sempre

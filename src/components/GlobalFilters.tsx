@@ -10,6 +10,12 @@ export const GlobalFilters: React.FC = () => {
 
   const monthOptions = React.useMemo(() => getLast12Months(), []);
 
+  React.useEffect(() => {
+    if (projects && projects.length > 0 && !projectKey) {
+      setFilter('projectKey', projects[0].key);
+    }
+  }, [projects, projectKey, setFilter]);
+
   return (
     <div className="bg-surface/90 backdrop-blur-md border-b border-border p-4 sticky top-16 z-30 flex flex-wrap gap-4 items-center transition-colors duration-200">
       <div className="flex flex-col">

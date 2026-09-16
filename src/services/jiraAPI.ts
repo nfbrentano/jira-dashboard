@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { useConfigStore, isForgeEnvironment, type ConfigState } from '../store/configStore';
+import { useFieldMappingStore } from '../store/fieldMappingStore';
 
 export { isForgeEnvironment };
 
-const callForgeJira = async (restPath: string) => {
+const callForgeJira = async (restPath: string, options?: any) => {
   const { requestJira } = await import('@forge/bridge');
-  return requestJira(restPath);
+  return requestJira(restPath, options);
 };
 
 export const getJiraApi = (customConfig?: Partial<ConfigState>) => {
@@ -74,6 +75,7 @@ export const fetchProjects = async () => {
 
 export const fetchIssues = async (jql: string, maxResults = 100) => {
   console.log('[Jira API] Executing search/jql with JQL:', jql);
+  const mappingConfig = useFieldMappingStore.getState().config;
   const fields = [
     'summary',
     'status',
@@ -83,18 +85,24 @@ export const fetchIssues = async (jql: string, maxResults = 100) => {
     'created',
     'updated',
     'resolutiondate',
-    'customfield_10016', // Story Points
+    mappingConfig.storyPointsField || 'customfield_10016', // Dynamic Story Points
     'fixVersions',
   ].join(',');
 
   if (isForgeEnvironment()) {
-    const params = new URLSearchParams({
-      jql,
-      maxResults: String(maxResults),
-      expand: 'changelog',
-      fields,
+    const response = await callForgeJira(`/rest/api/3/search/jql`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        jql,
+        maxResults,
+        expand: ['changelog'],
+        fields: fields.split(','),
+      })
     });
-    const response = await callForgeJira(`/rest/api/3/search/jql?${params.toString()}`);
     if (!response.ok) {
       throw new Error(`Erro ao buscar issues via Forge: ${response.statusText} (${response.status})`);
     }
@@ -108,15 +116,13 @@ export const fetchIssues = async (jql: string, maxResults = 100) => {
   }
 
   const api = getJiraApi();
-  // NOTE: Atlassian removed /rest/api/3/search with HTTP 410 Gone (CHANGE-2046).
-  // The official replacement is /rest/api/3/search/jql
-  const response = await api.get('/rest/api/3/search/jql', {
-    params: {
-      jql,
-      maxResults,
-      expand: 'changelog',
-      fields,
-    },
+  // NOTE: Atlassian removed POST /rest/api/3/search with HTTP 410 Gone (CHANGE-2046).
+  // The official replacement is POST /rest/api/3/search/jql
+  const response = await api.post('/rest/api/3/search/jql', {
+    jql,
+    maxResults,
+    expand: ['changelog'],
+    fields: fields.split(','),
   });
   console.log('[Jira API Axios] Search results:', {
     total: response.data?.total,

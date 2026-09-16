@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIssuesQuery } from '../../hooks/useIssuesQuery';
 import { Layers, Activity, Bug, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { differenceInDays } from 'date-fns';
 
 export const KPICards: React.FC = () => {
   const { data, isLoading, error } = useIssuesQuery();
@@ -29,6 +30,12 @@ export const KPICards: React.FC = () => {
   // Custom status logic (may need adjustment depending on Jira workflow)
   const readyForQA = issues.filter(i => i.fields?.status?.name?.toLowerCase().includes('qa') || i.fields?.status?.name?.toLowerCase().includes('test')).length;
 
+  const stuck10d = issues.filter(i => {
+    if (i.fields?.status?.statusCategory?.key !== 'indeterminate') return false;
+    const updated = new Date(i.fields.updated);
+    return differenceInDays(new Date(), updated) > 10;
+  }).length;
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
       <Card title="Total Items" value={totalItems} icon={Layers} color="blue" />
@@ -36,7 +43,7 @@ export const KPICards: React.FC = () => {
       <Card title="Done" value={done} icon={CheckCircle2} color="emerald" />
       <Card title="QA Queue" value={readyForQA} icon={Bug} color="purple" />
       <Card title="No Release" value={withoutRelease} icon={AlertTriangle} color="rose" />
-      <Card title="Stuck > 10d" value={0 /* TODO: Aging calculation */} icon={Clock} color="amber" />
+      <Card title="Stuck > 10d" value={stuck10d} icon={Clock} color="amber" />
     </div>
   );
 };
